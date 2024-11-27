@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Reader</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        #video-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto 20px;
+        }
+
+        #video, #canvas {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+
+        .btn-secondary {
+            background-color: #2196F3;
+        }
+
+        .btn-secondary:hover {
+            background-color: #1976D2;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+            word-break: break-all;
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>QR Code Reader</h1>
+        
+        <div class="controls">
+            <button id="start-camera" class="btn">Start Camera</button>
+            <label for="file-input" class="btn btn-secondary">
+                Upload Image
+                <input type="file" id="file-input" accept="image/*">
+            </label>
+        </div>
+
+        <div id="video-container" style="display: none;">
+            <video id="video" playsinline></video>
+            <canvas id="canvas" style="display: none;"></canvas>
+        </div>
+
+        <div id="result-container" style="display: none;">
+            <h2>Decoded Result:</h2>
+            <div id="result"></div>
+            <button id="copy-btn" class="btn" style="display: none;">Copy Result</button>
+            <button id="open-url-btn" class="btn btn-secondary" style="display: none;">Open URL</button>
+        </div>
+
+        <div id="error" class="error"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    <script>
+        // DOM Elements
+        const startCameraBtn = document.getElementById('start-camera');
+        const fileInput = document.getElementById('file-input');
+        const videoContainer = document.getElementById('video-container');
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const resultContainer = document.getElementById('result-container');
+        const resultDiv = document.getElementById('result');
+        const errorDiv = document.getElementById('error');
+        const copyBtn = document.getElementById('copy-btn');
+        const openUrlBtn = document.getElementById('open-url-btn');
+
+        // QR Code scanning state
+        let scanning = false;
+
+        // Start camera
+        async function startCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+                video.srcObject = stream;
+                video.setAttribute('playsinline', true);
+                video.play();
+                videoContainer.style.display = 'block';
+                startCameraBtn.textContent = 'Stop Camera';
+                scanning = true;
+                scanQRCode();
+            } catch (err) {
+                displayError('Camera access denied or not available');
+            }
+        }
+
+        // Stop camera
+        function stopCamera() {
+            const stream = video.srcObject;
+            const tracks = stream.getTracks();
+
+            tracks.forEach(track => track.stop());
+            video.srcObject = null;
+            videoContainer.style.display = 'none';
+            startCameraBtn.textContent = 'Start Camera';
+            scanning = false;
+        }
+
+        // Toggle camera
+        startCameraBtn.addEventListener('click', () => {
+            if (scanning) {
+                stopCamera();
+            } else {
+                startCamera();
+            }
+        });
+
+        // Scan QR Code from camera
+        function scanQRCode() {
+            if (!scanning) return;
+
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+            const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+            if (code) {
+                processQRCode(code.data);
+            } else {
+                requestAnimationFrame(scanQRCode);
+            }
+        }
+
+        // Handle file upload
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const context = canvas.getContext('2d');
+                    context.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    
+                    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                    const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+                    if (code) {
+                        processQRCode(code.data);
+                    } else {
+                        displayError('No QR code found in the image');
+                    }
+                };
+                img.src = event.target.result;
+            };
+
+            reader.readAsDataURL(file);
+        });
+
+        // Process decoded QR code
+        function processQRCode(data) {
+            if (scanning) {
+                stopCamera();
+            }
+
+            resultContainer.style.display = 'block';
+            resultDiv.textContent = data;
+            errorDiv.textContent = '';
+
+            // URL detection and action buttons
+            const urlRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+            if (urlRegex.test(data)) {
+                copyBtn.style.display = 'inline-block';
+                openUrlBtn.style.display = 'inline-block';
+            } else {
+                copyBtn.style.display = 'none';
+                openUrlBtn.style.display = 'none';
+            }
+        }
+
+        // Copy result to clipboard
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(resultDiv.textContent)
+                .then(() => {
+                    copyBtn.textContent = 'Copied!';
+                    setTimeout(() => {
+                        copyBtn.textContent = 'Copy Result';
+                    }, 2000);
+                })
+                .catch(err => {
+                    displayError('Failed to copy');
+                });
+        });
+
+        // Open URL in new tab
+        openUrlBtn.addEventListener('click', () => {
+            const url = resultDiv.textContent;
+            window.open(url, '_blank');
+        });
+
+        // Display error messages
+        function displayError(message) {
+            errorDiv.textContent = message;
+            resultContainer.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
