@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoundWave Pro Headphones</title>
+    <style>
+        :root {
+            --primary-color: #6A5ACD;
+            --secondary-color: #FF6B6B;
+            --background-color: #F0F4F8;
+            --text-color: #2C3E50;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .product-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            display: flex;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .product-gallery {
+            flex: 1;
+            position: relative;
+            background: linear-gradient(135deg, var(--primary-color), #8A4FFF);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main-image {
+            max-width: 100%;
+            max-height: 500px;
+            object-fit: contain;
+            border-radius: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .main-image:hover {
+            transform: scale(1.05);
+        }
+
+        .thumbnail-gallery {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .thumbnail {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 10px;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .thumbnail:hover, .thumbnail.active {
+            opacity: 1;
+            border-color: var(--secondary-color);
+        }
+
+        .product-details {
+            flex: 1;
+            padding: 2rem;
+            background: white;
+        }
+
+        .product-title {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .product-price {
+            font-size: 2rem;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        .color-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+
+        .color-option:hover, .color-option.selected {
+            border-color: var(--primary-color);
+        }
+
+        .cart-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            border: 2px solid var(--background-color);
+            border-radius: 30px;
+        }
+
+        .quantity-control button {
+            width: 40px;
+            height: 40px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+
+        .quantity-control input {
+            width: 50px;
+            text-align: center;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .add-to-cart {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .add-to-cart:hover {
+            background: #5A4ACD;
+        }
+
+        .product-features {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            background: var(--background-color);
+            padding: 1rem;
+            border-radius: 10px;
+        }
+
+        .feature {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .feature i {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="product-container">
+        <div class="product-gallery">
+            <img src="https://s3b.cashify.in/gpro/uploads/2022/04/23213507/callmate-sound-wave-pro-front.jpg" alt="SoundWave Pro Headphones" class="main-image" id="main-image">
+            <div class="thumbnail-gallery">
+                <img src="https://www.binarytides.com/blog/wp-content/uploads/2020/02/oneodio-wired-gaming-stereo-headsets-957x1024.jpg" alt="Headphones Angle 1" class="thumbnail active">
+                <img src="https://th.bing.com/th/id/OIP.SpWs0jOmVy_Wojv-oZ4nGgHaIm?rs=1&pid=ImgDetMain" alt="Headphones Angle 2" class="thumbnail">
+                <img src="https://th.bing.com/th/id/OIP.pN-fDAa0Q10QWCEhurKyUwHaFj?rs=1&pid=ImgDetMain" alt="Headphones Angle 3" class="thumbnail">
+            </div>
+        </div>
+        
+        <div class="product-details">
+            <h1 class="product-title">SoundWave Pro Wireless Headphones</h1>
+            <div class="product-price">$249.99</div>
+            
+            <p class="product-description">
+                Immerse yourself in premium sound with SoundWave Pro. Featuring advanced noise cancellation, 
+                40-hour battery life, and supreme comfort for the ultimate listening experience.
+            </p>
+            
+            <h3>Color Options:</h3>
+            <div class="color-selector">
+                <div class="color-option selected" style="background-color: #000000;"></div>
+                <div class="color-option" style="background-color: #808080;"></div>
+                <div class="color-option" style="background-color: #FFFFFF; border: 1px solid #ddd;"></div>
+            </div>
+            
+            <div class="product-features">
+                <div class="feature">
+                    <i>🔋</i>
+                    <span>40h Battery</span>
+                </div>
+                <div class="feature">
+                    <i>🎧</i>
+                    <span>Noise Cancel</span>
+                </div>
+                <div class="feature">
+                    <i>📶</i>
+                    <span>Bluetooth 5.0</span>
+                </div>
+            </div>
+            
+            <div class="cart-actions">
+                <div class="quantity-control">
+                    <button id="decrease-qty">-</button>
+                    <input type="text" id="quantity" value="1" readonly>
+                    <button id="increase-qty">+</button>
+                </div>
+                <button class="add-to-cart" id="add-to-cart">
+                    🛒 Add to Cart
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Image Gallery Functionality
+        const thumbnails = document.querySelectorAll('.thumbnail');
+        const mainImage = document.getElementById('main-image');
+
+        thumbnails.forEach(thumbnail => {
+            thumbnail.addEventListener('click', () => {
+                thumbnails.forEach(t => t.classList.remove('active'));
+                thumbnail.classList.add('active');
+                mainImage.src = thumbnail.src;
+            });
+        });
+
+        // Color Selection
+        const colorOptions = document.querySelectorAll('.color-option');
+        colorOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                colorOptions.forEach(o => o.classList.remove('selected'));
+                option.classList.add('selected');
+            });
+        });
+
+        // Quantity Control
+        const quantityInput = document.getElementById('quantity');
+        const decreaseBtn = document.getElementById('decrease-qty');
+        const increaseBtn = document.getElementById('increase-qty');
+
+        decreaseBtn.addEventListener('click', () => {
+            let currentValue = parseInt(quantityInput.value);
+            if (currentValue > 1) {
+                quantityInput.value = currentValue - 1;
+            }
+        });
+
+        increaseBtn.addEventListener('click', () => {
+            let currentValue = parseInt(quantityInput.value);
+            quantityInput.value = currentValue + 1;
+        });
+    </script>
+</body>
+</html>
